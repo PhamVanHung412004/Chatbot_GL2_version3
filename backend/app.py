@@ -4,6 +4,7 @@ from flask import Flask, render_template, request, jsonify, session, send_from_d
 from flask_cors import CORS
 # from backend.data import get_answer, get_predefined_questions
 from data import get_answer
+from sentence_transformers import SentenceTransformer
 import logging
 
 
