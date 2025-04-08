@@ -14,7 +14,7 @@ from gtts import gTTS
 BASE_DIR = Path(__file__).resolve().parent
 
 def load_model() -> SentenceTransformer:
-    return SentenceTransformer("all-MiniLM-L6-v2")
+    return SentenceTransformer(str(BASE_DIR / "model" / "all-MiniLM-L6-v2"))
 
 def get_answer(use_query):
     try:
