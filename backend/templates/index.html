@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Đảo Trường Sa</title>
+    <style>
+        :root {
+            --primary-color: #673AB7;
+            --secondary-color: #5E35B1;
+            --bg-color: #ffffff;
+            --text-color: #333333;
+            --sidebar-width: 300px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            height: 100vh;
+            /* Fixed position issue */
+            position: fixed;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: #f5f5f5;
+            border-right: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 10;
+        }
+
+        .sidebar.hidden {
+            transform: translateX(-100%);
+        }
+
+        .main-panel {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            margin-left: 0;
+            transition: margin-left 0.3s ease;
+            width: 100%;
+        }
+
+        .sidebar-visible .main-panel {
+            margin-left: var(--sidebar-width);
+        }
+
+        .toggle-sidebar {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 20;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo-container {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .logo-container h1 {
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        .history-container {
+            padding: 1rem;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .history-container h3 {
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .predefined-questions {
+            padding: 1rem;
+        }
+
+        .predefined-questions h3 {
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .predefined-questions ul {
+            list-style: none;
+        }
+
+        .predefined-questions li {
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            background-color: #e3f2fd;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .predefined-questions li:hover {
+            background-color: #bbdefb;
+        }
+
+        .chat-panel {
+            flex-grow: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+            /* Đảm bảo không bị che khuất bởi input */
+            padding-bottom: 80px;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            border-radius: 8px;
+            max-width: 80%;
+            word-wrap: break-word;
+            position: relative;
+            background-color: transparent;
+        }
+
+        .user-message {
+            background-color: #e1f5fe;
+            margin-left: auto;
+            border-bottom-right-radius: 0;
+        }
+
+        .bot-message {
+            background-color: white;
+            margin-right: auto;
+            border-bottom-left-radius: 0;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .message-input {
+            display: flex;
+            padding: 1rem;
+            background-color: white;
+            border-top: 1px solid #e0e0e0;
+            position: relative;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+
+        .message-input input {
+            flex-grow: 1;
+            padding: 0.75rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            margin-right: 0.5rem;
+            font-size: 1rem;
+            max-width: calc(100% - 100px);
+            /* Ensure it doesn't overflow on small screens */
+            box-sizing: border-box;
+            /* Include padding and border in width calculation */
+        }
+
+        .message-input button {
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .message-input button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .mic-button {
+            background-color: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.5rem;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .mic-button:hover {
+            background-color: #e0e0e0;
+        }
+
+        .mic-button.recording {
+            background-color: #f44336;
+            color: white;
+            border-color: #d32f2f;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .welcome-message {
+            text-align: center;
+            margin: 2rem 0;
+            padding: 1rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .welcome-message h2 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .reset-button {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        .reset-button:hover {
+            background-color: #d32f2f;
+        }
+
+        .loading {
+            display: inline-block;
+            margin-left: 5px;
+        }
+
+        .dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #888;
+            margin: 0 2px;
+            animation: dot-pulse 1.5s infinite ease-in-out;
+        }
+
+        .dot:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+
+        .dot:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+
+        @keyframes dot-pulse {
+
+            0%,
+            80%,
+            100% {
+                transform: scale(0.8);
+            }
+
+            40% {
+                transform: scale(1.2);
+            }
+        }
+
+        /* Speaker button styling */
+        .speaker-button {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            width: 24px;
+            height: 24px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            opacity: 0.7;
+            transition: opacity 0.3s, background-color 0.3s;
+        }
+
+        .speaker-button:hover {
+            opacity: 1;
+            background-color: rgba(255, 255, 255, 1);
+        }
+
+        .user-message .speaker-button {
+            background-color: rgba(225, 245, 254, 0.8);
+        }
+
+        .user-message .speaker-button:hover {
+            background-color: rgba(225, 245, 254, 1);
+        }
+
+        .speaker-button.speaking {
+            animation: pulse-light 1.5s infinite;
+        }
+
+        @keyframes pulse-light {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        /* Desktop styles */
+        @media screen and (min-width: 769px) {
+            .app-container {
+                display: flex;
+            }
+
+            .sidebar {
+                position: relative;
+                transform: none;
+            }
+
+            .sidebar.hidden {
+                transform: none;
+            }
+
+            .main-panel {
+                margin-left: 0;
+                width: calc(100% - var(--sidebar-width));
+            }
+
+            .toggle-sidebar {
+                display: none;
+            }
+        }
+
+        /* Mobile styles */
+        @media screen and (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 80%;
+                max-width: 300px;
+            }
+
+            .main-panel {
+                width: 100%;
+            }
+
+            .message-input {
+                padding-bottom: 120px;
+                /* Increase padding to ensure input is not hidden */
+            }
+
+            .auto-speak-toggle {
+                bottom: 20px;
+                right: 20px;
+                margin-bottom: 10px;
+            }
+        }
+
+        /* Chat history styling */
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .chat-session {
+            padding: 8px;
+            border-radius: 4px;
+            background-color: #e3f2fd;
+            font-size: 0.9rem;
+            cursor: pointer;
+            word-break: break-word;
+            margin-bottom: 8px;
+            transition: background-color 0.3s;
+        }
+
+        .chat-session:hover {
+            background-color: #bbdefb;
+        }
+
+        .session-title {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .no-history {
+            color: #757575;
+            font-style: italic;
+            text-align: center;
+            padding: 10px;
+        }
+
+        /* Recording message styling */
+        .recording-message {
+            background-color: #ffeaea;
+            color: #f44336;
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            max-width: 200px;
+            margin-right: auto;
+            animation: pulse-light 2s infinite;
+        }
+
+        .recording-message .mic-icon {
+            margin-right: 8px;
+            font-size: 1.2rem;
+        }
+
+        @keyframes pulse-light {
+
+            0%,
+            100% {
+                opacity: 0.7;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* Remove the old recording text that was positioned in center */
+        .recording-text {
+            display: none;
+        }
+
+        /* Auto-speak toggle styling */
+        .auto-speak-toggle {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            z-index: 100;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .auto-speak-toggle:hover {
+            opacity: 1;
+        }
+
+        .auto-speak-toggle .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+            margin-left: 8px;
+        }
+
+        .auto-speak-toggle .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .auto-speak-toggle .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 20px;
+        }
+
+        .auto-speak-toggle .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        .auto-speak-toggle input:checked+.slider {
+            background-color: #4CAF50;
+        }
+
+        .auto-speak-toggle input:checked+.slider:before {
+            transform: translateX(20px);
+        }
+
+        .message-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .message-icon {
+            border-radius: 50%;
+            flex-shrink: 0;
+            /* Prevents the icon from shrinking */
+        }
+
+        .message-content {
+            flex-grow: 1;
+            /* Allows the content to take available space */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .speaker-button {
+            cursor: pointer;
+            margin-left: 10px;
+            background: none;
+            border: none;
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <button class="toggle-sidebar" onclick="toggleSidebar()">
+            ☰
+        </button>
+
+        <div class="sidebar">
+            <div class="logo-container">
+                <h1>Đảo Trường Sa</h1>
+            </div>
+            <div class="history-container">
+                <h3>Lịch sử trò chuyện</h3>
+                <div id="history-list" class="history-list">
+                    <div class="no-history">
+                        Chưa có cuộc trò chuyện nào
+                    </div>
+                </div>
+                <button class="reset-button" onclick="resetChat()">Làm mới</button>
+            </div>
+        </div>
+
+        <div class="main-panel">
+            <div class="chat-panel" id="chat-panel">
+                <div class="welcome-message">
+                    <h2>Chào bạn! Bạn muốn tìm hiểu điều gì về quần đảo Trường Sa Lớn?</h2>
+                </div>
+            </div>
+            <div class="message-input">
+                <button class="mic-button" id="micButton" onclick="startRecording()">🎤</button>
+                <input type="text" id="userInput" placeholder="Gõ câu hỏi của bạn..."
+                    onkeypress="handleKeyPress(event)" />
+                <button onclick="sendMessage()">Gửi</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auto-speak toggle button -->
+    <div class="auto-speak-toggle">
+        <span>Tự động đọc</span>
+        <label class="toggle-switch">
+            <input type="checkbox" id="autoSpeakToggle" checked>
+            <span class="slider"></span>
+        </label>
+    </div>
+
+    <script>
+        let isSidebarVisible = false;
+        let recognition = null;
+        const API_BASE_URL = ''; // Empty for same domain, or 'http://localhost:5000' if different
+        let chatSessions = []; // Store chat sessions
+        let isRecording = false; // Track recording state
+        let currentSpeech = null; // Track current speech synthesis utterance
+        let autoSpeakEnabled = true; // Default to enabled
+
+        // Initialize on document load
+        document.addEventListener('DOMContentLoaded', function () {
+            // Load predefined questions
+            loadPredefinedQuestions();
+
+            // Load chat history
+            loadChatHistory();
+
+            // Set up Enter key for input field
+            document.getElementById('userInput').addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+
+            // Set up auto-speak toggle
+            document.getElementById('autoSpeakToggle').addEventListener('change', function () {
+                autoSpeakEnabled = this.checked;
+                // Stop any current speech when turned off
+                if (!autoSpeakEnabled) {
+                    stopSpeaking();
+                }
+            });
+
+            // Check for saved preference
+            const savedAutoSpeak = localStorage.getItem('autoSpeakEnabled');
+            if (savedAutoSpeak !== null) {
+                autoSpeakEnabled = savedAutoSpeak === 'true';
+                document.getElementById('autoSpeakToggle').checked = autoSpeakEnabled;
+            }
+        });
+
+        function toggleSidebar() {
+            isSidebarVisible = !isSidebarVisible;
+            document.querySelector('.sidebar').classList.toggle('hidden');
+            document.querySelector('.main-panel').classList.toggle('sidebar-visible');
+        }
+
+        function addMessageToChat(message, sender) {
+            const chatPanel = document.getElementById('chat-panel');
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message');
+            messageElement.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
+
+            // Set the container to adjust to different message alignments
+            messageElement.style.display = 'flex';
+            messageElement.style.width = '100%';
+            messageElement.style.justifyContent = sender === 'user' ? 'flex-end' : 'flex-start';
+            messageElement.style.marginBottom = '10px';
+
+            // Create a wrapper for horizontal layout
+            const messageWrapper = document.createElement('div');
+            messageWrapper.classList.add('message-wrapper');
+            messageWrapper.style.display = 'flex';
+            messageWrapper.style.alignItems = 'center';
+            messageWrapper.style.gap = '10px'; // Space between icon and message
+            messageWrapper.style.maxWidth = '80%'; // Prevent messages from being too wide
+
+            // For user messages, we'll use flex-direction: row-reverse to put icon on the right
+            if (sender === 'user') {
+                messageWrapper.style.flexDirection = 'row-reverse';
+            }
+
+            const iconElement = document.createElement('img');
+            iconElement.classList.add('message-icon');
+            iconElement.classList.add(sender === 'user' ? 'user-icon' : 'bot-icon');
+
+            // Data URL containing simple SVG images
+            if (sender === 'user') {
+                iconElement.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="35" r="25" fill="%233498db"/><circle cx="50" cy="100" r="45" fill="%233498db"/></svg>';
+            } else {
+                iconElement.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect x="10" y="10" width="80" height="80" rx="15" fill="%232ecc71"/><circle cx="35" cy="40" r="10" fill="white"/><circle cx="65" cy="40" r="10" fill="white"/><path d="M30 65 Q50 80 70 65" stroke="white" stroke-width="5" fill="none"/></svg>';
+            }
+
+            iconElement.alt = sender === 'user' ? 'User' : 'Bot';
+            iconElement.width = 40;
+            iconElement.height = 40;
+            iconElement.style.borderRadius = '50%';
+            iconElement.style.flexShrink = '0'; // Prevent icon from shrinking
+
+            // Create message content container
+            const contentContainer = document.createElement('div');
+            contentContainer.classList.add('message-content');
+            contentContainer.style.padding = '8px 12px';
+            contentContainer.style.borderRadius = '12px';
+            contentContainer.style.backgroundColor = sender === 'user' ? '#dcf8c6' : '#f0f0f0';
+            contentContainer.style.display = 'flex';
+            contentContainer.style.alignItems = 'center';
+            contentContainer.style.maxWidth = 'fit-content'; // Make width fit content
+            contentContainer.style.wordBreak = 'break-word'; // Ensure long words don't overflow
+
+            // Add message text
+            const messageContent = document.createElement('span');
+            messageContent.textContent = message;
+            contentContainer.appendChild(messageContent);
+
+            // Add speaker button
+            const speakerButton = document.createElement('button');
+            speakerButton.classList.add('speaker-button');
+            speakerButton.innerHTML = '🔊';
+            speakerButton.title = 'Đọc tin nhắn';
+            speakerButton.style.background = 'none';
+            speakerButton.style.border = 'none';
+            speakerButton.style.cursor = 'pointer';
+            speakerButton.style.marginLeft = '8px';
+            speakerButton.onclick = function () {
+                speakText(message);
+            };
+            contentContainer.appendChild(speakerButton);
+
+            // Add elements to the wrapper in the correct order
+            messageWrapper.appendChild(iconElement);
+            messageWrapper.appendChild(contentContainer);
+
+            // Add the wrapper to the message element
+            messageElement.appendChild(messageWrapper);
+
+            chatPanel.appendChild(messageElement);
+            chatPanel.scrollTop = chatPanel.scrollHeight; // Scroll to the bottom
+
+            // Automatically speak bot messages if enabled
+            if (sender === 'bot' && autoSpeakEnabled) {
+                speakText(message);
+            }
+        }
+
+        function addLoadingIndicator() {
+            const chatPanel = document.getElementById('chat-panel');
+            const loadingElement = document.createElement('div');
+            loadingElement.classList.add('message', 'bot-message', 'loading-message');
+            loadingElement.innerHTML = 'Đang nhập<span class="loading"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>';
+            loadingElement.id = 'loading-indicator';
+            chatPanel.appendChild(loadingElement);
+            chatPanel.scrollTop = chatPanel.scrollHeight;
+        }
+
+        function removeLoadingIndicator() {
+            const loadingIndicator = document.getElementById('loading-indicator');
+            if (loadingIndicator) {
+                loadingIndicator.remove();
+            }
+        }
+
+        // Add a recording indicator to the chat panel
+        function addRecordingIndicator() {
+            const chatPanel = document.getElementById('chat-panel');
+
+            // Check if recording indicator already exists
+            if (document.getElementById('recording-indicator')) {
+                return;
+            }
+
+            const recordingElement = document.createElement('div');
+            recordingElement.classList.add('recording-message');
+            recordingElement.id = 'recording-indicator';
+            recordingElement.innerHTML = '<span class="mic-icon">🎤</span> Đang ghi âm<span class="loading"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>';
+            chatPanel.appendChild(recordingElement);
+            chatPanel.scrollTop = chatPanel.scrollHeight;
+        }
+
+        // Remove recording indicator from chat panel
+        function removeRecordingIndicator() {
+            const recordingIndicator = document.getElementById('recording-indicator');
+            if (recordingIndicator) {
+                recordingIndicator.remove();
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function sendMessage() {
+            const inputField = document.getElementById('userInput');
+            const message = inputField.value.trim();
+            if (message) {
+                addMessageToChat(message, 'user');
+                inputField.value = '';
+
+                // Add loading indicator
+                addLoadingIndicator();
+
+                // Call to backend API
+                fetch(`${API_BASE_URL}/api/chat`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message: message }),
+                    credentials: 'include' // Include session cookies
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Remove loading indicator
+                        removeLoadingIndicator();
+
+                        // Display bot response
+                        addMessageToChat(data.response, 'bot');
+
+                        // Update history in sidebar
+                        loadChatHistory();
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        removeLoadingIndicator();
+                        addMessageToChat("Xin lỗi, đã xảy ra lỗi khi xử lý tin nhắn của bạn.", 'bot');
+                    });
+            }
+        }
+
+        function loadPredefinedQuestions() {
+            fetch(`${API_BASE_URL}/api/questions`)
+                .then(response => response.json())
+                .then(data => {
+                    const questionsList = document.getElementById('questions-list');
+                    if (questionsList) {
+                        questionsList.innerHTML = ''; // Clear existing items
+
+                        data.questions.forEach(question => {
+                            const li = document.createElement('li');
+                            li.textContent = question;
+                            li.onclick = function () {
+                                document.getElementById('userInput').value = question;
+                                sendMessage();
+                            };
+                            questionsList.appendChild(li);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading predefined questions:', error);
+                });
+        }
+
+        function loadChatHistory() {
+            fetch(`${API_BASE_URL}/api/history`, {
+                credentials: 'include' // Include session cookies
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const historyList = document.getElementById('history-list');
+                    const noHistory = document.querySelector('.no-history');
+
+                    if (data.history && data.history.length > 0) {
+                        // Hide the "no history" message
+                        if (noHistory) {
+                            noHistory.style.display = 'none';
+                        }
+
+                        // Process history data
+                        processHistoryData(data.history);
+
+                        // Clear existing history items
+                        historyList.innerHTML = '';
+
+                        // Display only user questions in sidebar
+                        displayChatSessionsInSidebar();
+                    } else {
+                        // Show the "no history" message
+                        if (noHistory) {
+                            noHistory.style.display = 'block';
+                        }
+
+                        // Reset history list
+                        historyList.innerHTML = '';
+                        if (noHistory) {
+                            historyList.appendChild(noHistory);
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading chat history:', error);
+                });
+        }
+
+        function processHistoryData(history) {
+            // Group messages into conversation sessions
+            chatSessions = [];
+            let currentSession = [];
+
+            // Process each message and group into sessions
+            history.forEach((item, index) => {
+                currentSession.push(item);
+
+                // Start a new session after each bot response
+                if (item.sender === 'bot' && index < history.length - 1 && history[index + 1].sender === 'user') {
+                    chatSessions.push([...currentSession]);
+                    currentSession = [];
+                }
+            });
+
+            // Add the last session if not empty
+            if (currentSession.length > 0) {
+                chatSessions.push(currentSession);
+            }
+        }
+
+        function displayChatSessionsInSidebar() {
+            const historyList = document.getElementById('history-list');
+            historyList.innerHTML = '';
+
+            // Display each session with only the user question as title
+            chatSessions.forEach((session, sessionIndex) => {
+                // Find the first user message in the session
+                const userMessage = session.find(item => item.sender === 'user');
+                if (!userMessage) return;
+
+                const sessionElement = document.createElement('div');
+                sessionElement.classList.add('chat-session');
+
+                // Create session title from user question
+                const questionText = userMessage.text.length > 30
+                    ? userMessage.text.substring(0, 30) + '...'
+                    : userMessage.text;
+
+                sessionElement.textContent = questionText;
+
+                // Add click handler to load this session
+                sessionElement.onclick = function () {
+                    displaySession(sessionIndex);
+                };
+
+                historyList.appendChild(sessionElement);
+            });
+        }
+
+        function displaySession(sessionIndex) {
+            const session = chatSessions[sessionIndex];
+            if (!session) return;
+
+            // Clear chat panel
+            const chatPanel = document.getElementById('chat-panel');
+            chatPanel.innerHTML = '';
+
+            // Display all messages in the session
+            session.forEach(item => {
+                addMessageToChat(item.text, item.sender);
+            });
+        }
+
+        function startRecording() {
+            const micButton = document.getElementById('micButton');
+            micButton.classList.toggle('recording');
+            isRecording = micButton.classList.contains('recording');
+
+            // Check if browser supports Speech Recognition
+            if (!('webkitSpeechRecognition' in window)) {
+                alert('Trình duyệt của bạn không hỗ trợ tính năng nhận diện giọng nói.');
+                return;
+            }
+
+            // Initialize SpeechRecognition if not initialized
+            if (recognition === null) {
+                recognition = new webkitSpeechRecognition();
+                recognition.lang = 'vi-VN'; // Set language to Vietnamese
+                recognition.interimResults = false;
+                recognition.maxAlternatives = 1;
+
+                recognition.onstart = () => {
+                    console.log("Đang ghi âm...");
+                    // Add recording indicator to chat panel
+                    addRecordingIndicator();
+                };
+
+                recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    document.getElementById('userInput').value = transcript;
+                    // Remove recording indicator
+                    removeRecordingIndicator();
+                    sendMessage(); // Send the message automatically
+                };
+
+                recognition.onerror = (event) => {
+                    console.error("Lỗi nhận diện giọng nói:", event.error);
+                    micButton.classList.remove('recording');
+                    // Remove recording indicator
+                    removeRecordingIndicator();
+                };
+
+                recognition.onend = () => {
+                    micButton.classList.remove('recording');
+                    // Remove recording indicator
+                    removeRecordingIndicator();
+                    console.log("Dừng ghi âm.");
+                };
+            }
+
+            // Start or stop speech recognition
+            if (isRecording) {
+                recognition.start();
+                addRecordingIndicator();
+            } else {
+                recognition.stop();
+                removeRecordingIndicator();
+            }
+        }
+
+        function resetChat() {
+            // Clear only the chat panel, but preserve history in sidebar
+            const chatPanel = document.getElementById('chat-panel');
+            chatPanel.innerHTML = '';
+
+            // Add welcome message back
+            const welcomeDiv = document.createElement('div');
+            welcomeDiv.classList.add('welcome-message');
+            welcomeDiv.innerHTML = `<h2>Chào bạn! Bạn muốn tìm hiểu điều gì về quần đảo Trường Sa Lớn?</h2>`;
+            chatPanel.appendChild(welcomeDiv);
+
+            // Stop any ongoing speech
+            stopSpeaking();
+        }
+
+        // Text-to-speech function
+        function speakText(text) {
+            // Stop any ongoing speech
+            stopSpeaking();
+
+            // Check if browser supports Speech Synthesis
+            if (!('speechSynthesis' in window)) {
+                alert('Trình duyệt của bạn không hỗ trợ tính năng đọc văn bản.');
+                return;
+            }
+
+            // Create a new utterance
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'vi-VN'; // Set language to Vietnamese
+            utterance.rate = 1.0;     // Speech rate
+            utterance.pitch = 1.0;    // Speech pitch
+
+            // Find and highlight the active speaker button
+            const allSpeakerButtons = document.querySelectorAll('.speaker-button');
+            allSpeakerButtons.forEach(btn => {
+                if (btn.parentNode.textContent.includes(text)) {
+                    btn.classList.add('speaking');
+                }
+            });
+
+            // Store the current utterance
+            currentSpeech = utterance;
+
+            // Event handlers
+            utterance.onend = function () {
+                // Remove highlighting when speech ends
+                allSpeakerButtons.forEach(btn => {
+                    btn.classList.remove('speaking');
+                });
+                currentSpeech = null;
+            };
+
+            utterance.onerror = function (event) {
+                console.error('Speech synthesis error:', event);
+                allSpeakerButtons.forEach(btn => {
+                    btn.classList.remove('speaking');
+                });
+                currentSpeech = null;
+            };
+
+            // Start speaking
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // Function to stop ongoing speech
+        function stopSpeaking() {
+            if (window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+
+                // Remove speaking class from all buttons
+                const allSpeakerButtons = document.querySelectorAll('.speaker-button');
+                allSpeakerButtons.forEach(btn => {
+                    btn.classList.remove('speaking');
+                });
+
+                currentSpeech = null;
+            }
+        }
+
+        // Save auto-speak preference when changed
+        document.getElementById('autoSpeakToggle').addEventListener('change', function () {
+            localStorage.setItem('autoSpeakEnabled', this.checked);
+        });
+
+    </script>
+</body>
+
+</html>
