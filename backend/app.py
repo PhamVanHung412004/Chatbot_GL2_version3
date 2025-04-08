@@ -6,6 +6,10 @@ from flask_cors import CORS
 from data import get_answer
 import logging
 
+
+def load_model() -> SentenceTransformer:
+    return SentenceTransformer("model/all-MiniLM-L6-v2")
+
 app = Flask(__name__)
 CORS(app)  # Cho phép cross-origin requests từ frontend
 app.secret_key = os.environ.get("SESSION_SECRET", "spratlys_islands_secret_key")
@@ -29,7 +33,7 @@ def chat():
         })
         # print( "use: " , user_message)
         # Get bot response
-        bot_response = get_answer(user_message)
+        bot_response = get_answer(user_message,load_model())
         print("answers : " , bot_response)
         # Add bot response to chat history
         session['chat_history'].append({
@@ -163,4 +167,4 @@ def serve(path):
 logging.basicConfig(level=logging.DEBUG)
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port,debug=True)
+    app.run(host='0.0.0.0', port=port,debug=False)

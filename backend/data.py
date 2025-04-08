@@ -13,13 +13,11 @@ from gtts import gTTS
 # Lấy thư mục gốc của file hiện tại (tức là backend/)
 BASE_DIR = Path(__file__).resolve().parent
 
-def load_model() -> SentenceTransformer:
-    return SentenceTransformer("model/all-MiniLM-L6-v2")
 
-def get_answer(use_query):
+def get_answer(use_query, model):
     try:
         # Tìm kiếm semantic
-        list_index = Sematic_search(load_model(), use_query, 3).run()
+        list_index = Sematic_search(model, use_query, 3).run()
         vector_tmp = list_index[0]
         vector = [int(i) for i in vector_tmp]
 
