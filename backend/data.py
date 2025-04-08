@@ -1,30 +1,23 @@
 import os
 import json
 import speech_recognition as sr
-from pathlib import Path
+
 from semantic_search import Sematic_search
 from sentence_transformers import SentenceTransformer
 from gen import Answer_Question_From_Documents
 from langdetect import detect, LangDetectException
 from deep_translator import GoogleTranslator
-from read_file import Read_File_CSV
+
 from gtts import gTTS
 
 # Lấy thư mục gốc của file hiện tại (tức là backend/)
-BASE_DIR = Path(__file__).resolve().parent
-
-
-def get_answer(use_query, model):
+def get_answer(use_query, model,datas):
     try:
         # Tìm kiếm semantic
         list_index = Sematic_search(model, use_query, 3).run()
         vector_tmp = list_index[0]
         vector = [int(i) for i in vector_tmp]
-
-        # Đọc dữ liệu từ dataset.csv (dùng Path)
-        dataset_path = BASE_DIR / "dataset.csv"
-        datas = Read_File_CSV(str(dataset_path)).run()
-
+        
         # Lấy các đoạn văn bản liên quan
         list_context = [datas["text"][i] for i in vector]
         

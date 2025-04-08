@@ -2,14 +2,19 @@ import os
 import json
 from flask import Flask, render_template, request, jsonify, session, send_from_directory
 from flask_cors import CORS
-# from backend.data import get_answer, get_predefined_questions
+from pathlib import Path
 from data import get_answer
 from sentence_transformers import SentenceTransformer
 import logging
-
+from read_file import Read_File_CSV
+# Lấy thư mục gốc của file hiện tại (tức là backend/)
+BASE_DIR = Path(__file__).resolve().parent
+dataset_path = BASE_DIR / "dataset.csv"
 
 def load_model() -> SentenceTransformer:
     return SentenceTransformer("model/all-MiniLM-L6-v2")
+
+datas = Read_File_CSV(str(dataset_path)).run()
 
 app = Flask(__name__)
 CORS(app)  # Cho phép cross-origin requests từ frontend
@@ -34,7 +39,7 @@ def chat():
         })
         # print( "use: " , user_message)
         # Get bot response
-        bot_response = get_answer(user_message,load_model())
+        bot_response = get_answer(user_message,load_model(),datas)
         print("answers : " , bot_response)
         # Add bot response to chat history
         session['chat_history'].append({
