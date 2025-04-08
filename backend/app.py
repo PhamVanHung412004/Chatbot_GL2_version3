@@ -4,6 +4,7 @@ from flask import Flask, render_template, request, jsonify, session, send_from_d
 from flask_cors import CORS
 # from backend.data import get_answer, get_predefined_questions
 from data import get_answer
+import logging
 
 app = Flask(__name__)
 CORS(app)  # Cho phép cross-origin requests từ frontend
@@ -158,6 +159,8 @@ def serve(path):
                         {"path": "/api/reset", "method": "POST", "description": "Reset chat history"}
                     ]
                 })
+
+logging.basicConfig(level=logging.DEBUG)
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
