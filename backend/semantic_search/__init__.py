@@ -6,7 +6,7 @@ from Input import Init_Input
 
 # Đường dẫn đến thư mục chứa file vector_database.faiss
 BASE_DIR = Path(__file__).resolve().parent
-VECTOR_PATH = BASE_DIR / "vector_database.faiss"
+VECTOR_PATH = BASE_DIR / "vector_tmp.faiss"
 
 def read_model() -> dict:
     # Đọc file FAISS từ đường dẫn đã chuẩn hóa bằng pathlib

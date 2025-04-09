@@ -5,11 +5,11 @@ from flask_cors import CORS
 from pathlib import Path
 from data import get_answer
 from sentence_transformers import SentenceTransformer
-import logging
 from read_file import Read_File_CSV
+
 # Lấy thư mục gốc của file hiện tại (tức là backend/)
 BASE_DIR = Path(__file__).resolve().parent
-dataset_path = BASE_DIR / "dataset.csv"
+dataset_path = BASE_DIR / "dataset_tmp.csv"
 
 def load_model() -> SentenceTransformer:
     return SentenceTransformer("model/all-MiniLM-L6-v2")
@@ -169,8 +169,7 @@ def serve(path):
                         {"path": "/api/reset", "method": "POST", "description": "Reset chat history"}
                     ]
                 })
-
-logging.basicConfig(level=logging.DEBUG)
+            
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port,debug=False)
+    app.run(host='0.0.0.0', port=port)
