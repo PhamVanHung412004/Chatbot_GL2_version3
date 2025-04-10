@@ -1,17 +1,12 @@
-import os
 import json
-import speech_recognition as sr
-
 from semantic_search import Sematic_search
-from sentence_transformers import SentenceTransformer
 from gen import Answer_Question_From_Documents
 from langdetect import detect, LangDetectException
 from deep_translator import GoogleTranslator
 
-from gtts import gTTS
 
 # Lấy thư mục gốc của file hiện tại (tức là backend/)
-def get_answer(use_query, model,datas):
+def get_answer(use_query, model,datas, data_dict):
     try:
         # Tìm kiếm semantic
         list_index = Sematic_search(model, use_query, 3).run()
@@ -19,8 +14,8 @@ def get_answer(use_query, model,datas):
         vector = [int(i) for i in vector_tmp]
         
         # Lấy các đoạn văn bản liên quan
-        list_context = [datas["text"][i] for i in vector]
-        
+        list_context = [data_dict[datas["text"][i]] for i in vector]
+    
         # Tạo câu trả lời
         answer = Answer_Question_From_Documents(use_query, list_context).run()
 

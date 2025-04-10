@@ -7,6 +7,19 @@ from data import get_answer
 from sentence_transformers import SentenceTransformer
 from read_file import Read_File_CSV
 
+
+class read_file_json:
+    def __init__(self, path : str = None) -> None:
+        '''
+        path : đường dẫn của file .txt
+        '''
+        self.__path = path
+
+    def get_data(self) -> dict:
+        with open(self.__path, "r", encoding="utf-8") as file:
+            data = json.load(file)
+            return data
+
 # Lấy thư mục gốc của file hiện tại (tức là backend/)
 BASE_DIR = Path(__file__).resolve().parent
 dataset_path = BASE_DIR / "dataset_tmp.csv"
@@ -14,7 +27,12 @@ dataset_path = BASE_DIR / "dataset_tmp.csv"
 def load_model() -> SentenceTransformer:
     return SentenceTransformer("model/all-MiniLM-L6-v2")
 
+# def read_file_json(path):
+
 datas = Read_File_CSV(str(dataset_path)).run()
+
+file_path_json = Path(__file__).parent.parent 
+data_dict = read_file_json(file_path_json / "truong_sa_qa_deduplicated.json").get_data()
 
 app = Flask(__name__)
 CORS(app)  # Cho phép cross-origin requests từ frontend
@@ -39,7 +57,7 @@ def chat():
         })
         # print( "use: " , user_message)
         # Get bot response
-        bot_response = get_answer(user_message,load_model(),datas)
+        bot_response = get_answer(user_message,load_model(),datas, data_dict)
         print("answers : " , bot_response)
         # Add bot response to chat history
         session['chat_history'].append({
@@ -85,13 +103,6 @@ def history():
     return jsonify({
         'history': frontend_history
     })
-
-# @app.route('/api/questions')
-# def questions():
-#     """API endpoint to get predefined questions."""
-#     return jsonify({
-#         'questions': get_predefined_questions()
-#     })
 
 @app.route('/api/reset', methods=['POST'])
 def reset():
@@ -173,3 +184,4 @@ def serve(path):
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
+
