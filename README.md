@@ -42,36 +42,34 @@ Chatbot Đảo Trường Sa là một ứng dụng trí tuệ nhân tạo sử d
 ## Cấu trúc dự án 📁
 
 ```
-── backend/                      # Thư mục backend
-│   ├── convert_embedding/        # Module xử lý embedding
-│   ├── gen/                     # Module sinh dữ liệu
-│   ├── input/                   # Dữ liệu đầu vào
-│   ├── model/                   # Models
-│   ├── read_file/              # Module đọc file
-│   ├── semantic_search/        # Module tìm kiếm ngữ nghĩa
-│   ├── templates/              # Templates
-│   ├── app.py                  # API endpoints
-│   ├── data.py                 # Xử lý dữ liệu
-│   ├── dataset_tmp.csv         # Dataset tạm thời
-│   ├── main.py                 # Entry point
-│   ├── README.md              
+── backend/                    # Thư mục backend
+│   ├── convert_embedding/     # Module xử lý embedding
+│   ├── gen/                   # Module sinh dữ liệu
+│   ├── input/                 # Dữ liệu đầu vào
+│   ├── model/                 # Models
+│   ├── read_file/             # Module đọc file
+│   ├── semantic_search/       # Module tìm kiếm ngữ nghĩa
+│   ├── templates/             # Templates
+│   ├── app.py                 # API endpoints
+│   ├── data.py                # Xử lý dữ liệu
+│   ├── dataset_tmp.csv        # Dataset tạm thời
+│   ├── main.py                # Entry point             
 │   ├── render.yaml            
-│   ├── requirements.txt        # Dependencies Python
+│   ├── requirements.txt       # Dependencies Python
 │   ├── start_backend.py       # Script khởi động backend
-│   └── test.py                # Tests
-├── frontend/                   # Thư mục frontend
+│   └── test.py                # Tests   
+├── convert_csv/                
+├── frontend/                  # Thư mục frontend
 │   ├── node_modules/          # Dependencies
 │   ├── public/                # Assets công khai
 │   ├── src/                   # Source code
 │   ├── package-lock.json      
-│   ├── package.json           # Dependencies Node.js
-│   └── README.md
+│   ├── package.json
+├── image/                  # Thư mục image  
 ├── save_vectordatabase/              # save vectordatabase
-├── README.md                  # Tài liệu chính
 ├── package-lock.json
 ├── package.json               # Dependencies chính
-├── pyproject.toml            # Cấu hình Python
-├── start_complete_app.sh     # Script khởi động toàn bộ
+├── README.md                  # Tài liệu chính
 ├──truong_sa_qa_deduplicated.json # dataset
 ```
 
