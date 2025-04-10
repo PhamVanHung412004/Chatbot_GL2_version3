@@ -1,5 +1,6 @@
 # Chatbot Đảo Trường Sa với RAG 🏝️
 # Ảnh của website Chatbot
+[Link website chatbot](https://youtu.be/9KUuzOT_w2g)
 ![Ảnh](image/img.jpg)
 ## Giới thiệu
 
@@ -159,10 +160,15 @@ Bước 4: Từ những câu trả lời có liên quan tôi đưa nó vào mô 
 ## Tác giả ✨
 
 **Phạm Văn Hùng**
+Công việc: Thiết kế hệ thống RAG
 - GitHub: [@PhamVanHung412004](https://github.com/PhamVanHung412004)
 
-## Liên hệ 📬
+**Vũ Đức Hải**
+Công việc: Design Web, deploy
+- GitHub: [@Dokkuhai](https://github.com/Dokkuhai)
 
+
+## Liên hệ 📬
 Nếu bạn có bất kỳ câu hỏi hoặc góp ý, vui lòng:
 - Tạo issue trong repository
 - Liên hệ qua GitHub
