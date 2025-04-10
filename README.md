@@ -1,64 +1,171 @@
-# Chatbot Đảo Trường Sa
-
-![Trường Sa Islands](https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Spratly_Is_since_NalGeoMag.svg/300px-Spratly_Is_since_NalGeoMag.svg.png)
-
+# Chatbot Đảo Trường Sa với RAG 🏝️
+# Ảnh của website Chatbot
+![Ảnh](image/img.jpg)
 ## Giới thiệu
 
-Đây là ứng dụng chatbot cung cấp thông tin giáo dục về Quần đảo Trường Sa (Spratly Islands). Ứng dụng được xây dựng với kiến trúc tách biệt giữa frontend và backend để dễ dàng phát triển và mở rộng.
+Chatbot Đảo Trường Sa là một ứng dụng trí tuệ nhân tạo sử dụng kỹ thuật RAG (Retrieval Augmented Generation) để trả lời các câu hỏi về quần đảo Trường Sa của Việt Nam. Dự án này kết hợp giao diện web hiện đại với khả năng xử lý ngôn ngữ tự nhiên để cung cấp thông tin chính xác và đáng tin cậy.
 
-## Tính năng
+## Tính năng nổi bật 🌟
 
-- 💬 Chat văn bản với chatbot
-- 🎤 Ghi âm và gửi tin nhắn giọng nói
-- 📝 Xem lịch sử trò chuyện
-- ❓ Câu hỏi gợi ý để bắt đầu
-- 🔄 Đặt lại cuộc trò chuyện
-- 📱 Thiết kế responsive cho các thiết bị
+- **RAG (Retrieval Augmented Generation)**
+  - Tìm kiếm thông tin chính xác từ nguồn dữ liệu đáng tin cậy
+  - Tổng hợp câu trả lời tự nhiên và mạch lạc
+  - Cập nhật dữ liệu dễ dàng
 
-## Cách sử dụng
+- **Giao diện người dùng**
+  - Thiết kế Material-UI hiện đại và responsive
+  - Hỗ trợ dark/light mode
+  - Hiển thị lịch sử chat
+  - Gợi ý câu hỏi thông minh
 
-### Khởi động ứng dụng
+- **Xử lý âm thanh**
+  - Chuyển văn bản thành giọng nói (Text-to-Speech)
+  - Nhận diện giọng nói (Speech-to-Text)
+  - Điều chỉnh tốc độ phát âm
 
-```bash
-# Phương pháp 1: Khởi động toàn bộ ứng dụng (production)
-gunicorn --bind 0.0.0.0:5000 --reuse-port --reload main:app
+## Công nghệ sử dụng 🛠️
 
-# Phương pháp 2: Khởi động riêng backend và frontend (development)
-# Terminal 1 - Backend
-cd backend
-python start_backend.py
+### Frontend
+- **React.js** - Thư viện UI
+- **Material-UI** - Framework CSS
+- **Axios** - HTTP Client
+- **Web Speech API** - Xử lý âm thanh
 
-# Terminal 2 - Frontend
-cd frontend
-npm start
+### Backend
+- **Flask** - Web Framework
+- **Flask-CORS** - Xử lý CORS
+- **gTTS** - Google Text-to-Speech
+- **SpeechRecognition** - Nhận diện giọng nói
+- **RAG** - Retrieval Augmented Generation
+
+## Cấu trúc dự án 📁
+
+```
+── backend/                      # Thư mục backend
+│   ├── convert_embedding/        # Module xử lý embedding
+│   ├── gen/                     # Module sinh dữ liệu
+│   ├── input/                   # Dữ liệu đầu vào
+│   ├── model/                   # Models
+│   ├── read_file/              # Module đọc file
+│   ├── semantic_search/        # Module tìm kiếm ngữ nghĩa
+│   ├── templates/              # Templates
+│   ├── app.py                  # API endpoints
+│   ├── data.py                 # Xử lý dữ liệu
+│   ├── dataset_tmp.csv         # Dataset tạm thời
+│   ├── main.py                 # Entry point
+│   ├── README.md              
+│   ├── render.yaml            
+│   ├── requirements.txt        # Dependencies Python
+│   ├── start_backend.py       # Script khởi động backend
+│   └── test.py                # Tests
+├── frontend/                   # Thư mục frontend
+│   ├── node_modules/          # Dependencies
+│   ├── public/                # Assets công khai
+│   ├── src/                   # Source code
+│   ├── package-lock.json      
+│   ├── package.json           # Dependencies Node.js
+│   └── README.md
+├── Train_Kmeans/              # Module training K-means
+├── README.md                  # Tài liệu chính
+├── package-lock.json
+├── package.json               # Dependencies chính
+├── pyproject.toml            # Cấu hình Python
+├── start_complete_app.sh     # Script khởi động toàn bộ
+├──truong_sa_qa_deduplicated.json # dataset
 ```
 
-Xem hướng dẫn chi tiết tại [tài liệu hướng dẫn](docs/INSTRUCTIONS.md).
+## Cài đặt và Chạy 🚀
 
-## Kiến trúc hệ thống
+1. **Clone dự án**
+```bash
+git clone https://github.com/PhamVanHung412004/Chatbot_GL2_version3.git
+cd Chatbot_GL2_version3
+```
 
-### Backend (Flask/Python)
-- Xử lý logic chatbot và cung cấp API RESTful
-- Lưu trữ dữ liệu trong session
-- Có sẵn các API endpoints cho chat, voice, history, questions, và reset
+2. **Cài đặt dependencies**
+```bash
+# Frontend
+cd frontend
+npm install
 
-### Frontend (React)
-- Giao diện người dùng tương tác, xây dựng với React
-- Kết nối với backend thông qua API
-- Có thể chạy tách biệt trong quá trình phát triển (cổng 3000)
+# Backend
+cd backend
+pip install -r requirements.txt
+```
 
-## API Documentation
+3. **Khởi động ứng dụng**
+```bash
+# Terminal 1 - Frontend
+cd frontend
+npm start
 
-| Endpoint | Method | Description | Request Body | Response |
-|----------|--------|-------------|--------------|----------|
-| `/api/chat` | POST | Gửi tin nhắn văn bản | `{"message": "text"}` | `{"response": "bot answer"}` |
-| `/api/voice` | POST | Gửi tin nhắn giọng nói | `{"audio": "base64_audio_data"}` | `{"response": "bot answer"}` |
-| `/api/history` | GET | Lấy lịch sử trò chuyện | - | `{"history": [{message objects}]}` |
-| `/api/questions` | GET | Lấy câu hỏi gợi ý | - | `{"questions": [{question objects}]}` |
-| `/api/reset` | POST | Đặt lại lịch sử | - | `{"status": "success"}` |
+# Terminal 2 - Backend
+cd backend
+python app.py
+```
 
-## Tài liệu bổ sung
+## Cách hoạt động của RAG 🔄
 
-Xem thêm:
-- [Tài liệu hướng dẫn](docs/INSTRUCTIONS.md)
-- [Tài liệu chi tiết](docs/README.md)
+### 1. Retrieval (Truy xuất)
+- Dữ liệu về Trường Sa được lưu trữ có cấu trúc
+- Khi nhận câu hỏi, hệ thống tìm kiếm thông tin liên quan
+- Sử dụng từ khóa và ngữ cảnh để chọn nội dung phù hợp
+
+### 2. Augmentation (Tăng cường)
+- Thông tin được truy xuất được đưa vào ngữ cảnh
+- Hệ thống phân tích và chọn lọc dữ liệu phù hợp
+- Tối ưu hóa nội dung cho câu trả lời
+
+### 3. Generation (Tạo câu trả lời)
+- Tổng hợp câu trả lời từ dữ liệu đã chọn
+- Đảm bảo câu trả lời mạch lạc và tự nhiên
+- Tạo âm thanh từ văn bản nếu cần
+
+## API Endpoints 📡
+
+### Chat API
+- `POST /api/chat`
+  - Gửi câu hỏi và nhận câu trả lời
+  - Hỗ trợ tạo file âm thanh
+
+### Speech API
+- `POST /api/speech-to-text`
+  - Chuyển đổi âm thanh thành văn bản
+  - Hỗ trợ nhiều định dạng âm thanh
+
+### History API
+- `GET /api/history`
+  - Lấy lịch sử chat
+- `POST /api/clear-history`
+  - Xóa lịch sử chat
+
+## Cấu hình môi trường 🔧
+
+### Biến môi trường
+```env
+FLASK_ENV=development
+FLASK_APP=app.py
+REACT_APP_API_URL=http://localhost:5000
+```
+
+### Ý tưởng dùng RAG
+```
+Bước 1: Tôi lưu câu hỏi kèm theo câu trả lời dưới dạng dict trong python rồi lưu dưới dạng dict bạn có thể xem ở trong file truong_sa_qa_deduplicated.json
+Bước 2:  Tôi đưa các câu hỏi vào vector embedding rồi lưu chúng vào vector database.
+Bước 3: 1 câu hỏi của user tôi sẽ tìm trong vectordata nào gần với câu hỏi nhất rồi tôi tiến hành tra lại trong dict ở file json.
+Bước 4: Từ những câu trả lời có liên quan tôi đưa nó vào mô hình sinh.Rồi đưa ra câu trả lời.     
+```
+
+## Tác giả ✨
+
+**Phạm Văn Hùng**
+- GitHub: [@PhamVanHung412004](https://github.com/PhamVanHung412004)
+
+## Liên hệ 📬
+
+Nếu bạn có bất kỳ câu hỏi hoặc góp ý, vui lòng:
+- Tạo issue trong repository
+- Liên hệ qua GitHub
+
+---
+Made with ❤️ by Phạm Văn Hùng
