@@ -1,6 +1,6 @@
 # Chatbot Đảo Trường Sa với RAG 🏝️
 # Ảnh của website Chatbot
-[Link website chatbot](https://youtu.be/9KUuzOT_w2g)
+[Link website chatbot](https://chatbot-gl-version3.onrender.com)
 ![Ảnh](image/img.jpg)
 ## Giới thiệu
 

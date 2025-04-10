@@ -1,7 +1,6 @@
 from package import np
 from package import pd
 from package import Read_File
-from package import Kmeans
 from package import Embedding_To_Numpy
 from package import Path
 from package import joblib
