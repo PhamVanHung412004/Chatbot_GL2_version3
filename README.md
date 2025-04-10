@@ -66,7 +66,7 @@ Chatbot Đảo Trường Sa là một ứng dụng trí tuệ nhân tạo sử d
 │   ├── package-lock.json      
 │   ├── package.json           # Dependencies Node.js
 │   └── README.md
-├── Train_Kmeans/              # Module training K-means
+├── save_vectordatabase/              # save vectordatabase
 ├── README.md                  # Tài liệu chính
 ├── package-lock.json
 ├── package.json               # Dependencies chính
