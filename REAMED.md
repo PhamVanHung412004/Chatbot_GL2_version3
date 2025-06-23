@@ -43,34 +43,34 @@ Chatbot Đảo Trường Sa là một ứng dụng trí tuệ nhân tạo sử d
 
 ```
 ── backend/                    # Thư mục backend
-│   ├── convert_embedding/     # Module xử lý embedding
-│   ├── gen/                   # Module sinh dữ liệu
-│   ├── input/                 # Dữ liệu đầu vào
+│   ├── Input/                 # Dữ liệu đầu vào
+│   ├── convert_embedding/     # Xử lý embedding
+│   ├── gen/                   # Sinh dữ liệu
 │   ├── model/                 # Models
-│   ├── read_file/             # Module đọc file
-│   ├── semantic_search/       # Module tìm kiếm ngữ nghĩa
+│   ├── read_file/             # Đọc file
+│   ├── semantic_search/       # Tìm kiếm ngữ nghĩa
 │   ├── templates/             # Templates
 │   ├── app.py                 # API endpoints
 │   ├── data.py                # Xử lý dữ liệu
 │   ├── dataset_tmp.csv        # Dataset tạm thời
-│   ├── main.py                # Entry point             
-│   ├── render.yaml            
+│   ├── main.py                # Entry point
+│   ├── render.yaml
 │   ├── requirements.txt       # Dependencies Python
-│   ├── start_backend.py       # Script khởi động backend
-│   └── test.py                # Tests   
-├── convert_csv/                
+│   ├── start_backend.py       # Khởi động backend
+│   └── test.py                # Tests
 ├── frontend/                  # Thư mục frontend
-│   ├── node_modules/          # Dependencies
 │   ├── public/                # Assets công khai
 │   ├── src/                   # Source code
-│   ├── package-lock.json      
+│   ├── package-lock.json
 │   ├── package.json
-├── image/                  # Thư mục image  
-├── save_vectordatabase/              # save vectordatabase
+│   └── start_frontend.sh
+├── image/                     # Thư mục ảnh
 ├── package-lock.json
 ├── package.json               # Dependencies chính
-├── README.md                  # Tài liệu chính
-├──truong_sa_qa_deduplicated.json # dataset
+├── requirements.txt           # Các gói Python
+├── README.md                  # Hướng dẫn tiếng Anh
+├── REAMED.md                  # Hướng dẫn tiếng Việt
+├── truong_sa_qa_deduplicated.json # Dataset Q&A
 ```
 
 ## Cài đặt và Chạy 🚀
